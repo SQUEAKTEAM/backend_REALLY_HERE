@@ -97,6 +97,15 @@ internal class DayTaskService : IDayTaskService
     
     public async Task DeleteByIdAsync(int id, int userId, CancellationToken cancellationToken = default)
     {
-        await repository.DeleteByIdAsync(id, cancellationToken);
+        var userTasks = await repository.GetByUserIdAsync(userId, cancellationToken);
+        var taskToDelete = userTasks.FirstOrDefault(t => t.Id == id);
+        if (taskToDelete == null)
+        {
+            throw new InvalidOperationException($"Задача с ID {id} не найдена или не принадлежит пользователю");
+        }
+    
+        taskToDelete.IsDeleted = true;
+    
+        await repository.UpdateAsync(taskToDelete, cancellationToken);
     }
 }
