@@ -25,6 +25,7 @@ public class TaskCreateDto
     public bool IsArchived { get; set; }
     public bool IsRepeat { get; set; }
     public int CategoryId { get; set; }
+    public int ScheduleId { get; set; }
 }
 
 public class TaskDto

@@ -33,7 +33,8 @@ public class TasksController(IDayTaskService dayTaskService, ICurrentUserService
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateTask([FromBody] TaskCreateDto task)
     {
-        await dayTaskService.CreateAsync(task);
+        var user = await currentUserService.GetCurrentUserAsync();
+        await dayTaskService.CreateAsync(task, user.Id);
         return Created();
     }
 

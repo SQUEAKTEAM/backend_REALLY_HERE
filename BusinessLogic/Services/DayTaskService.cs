@@ -13,7 +13,7 @@ internal class DayTaskService : IDayTaskService
         this.repository = repository;
     }
     
-    public async Task CreateAsync(TaskCreateDto taskDto, CancellationToken cancellationToken = default)
+    public async Task CreateAsync(TaskCreateDto taskDto, int userId, CancellationToken cancellationToken = default)
     {
         var dayTask = new DayTask
         {
@@ -26,7 +26,9 @@ internal class DayTaskService : IDayTaskService
             IsDeleted = false,
             IsArchived = taskDto.IsArchived,
             IsRepeat = taskDto.IsRepeat,
-            CategoryId = taskDto.CategoryId
+            CategoryId = taskDto.CategoryId,
+            ScheduleId = taskDto.ScheduleId,
+            UserId = userId
         };
 
         await repository.CreateAsync(dayTask, cancellationToken);
