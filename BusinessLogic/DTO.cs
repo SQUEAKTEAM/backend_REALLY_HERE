@@ -24,8 +24,8 @@ public class TaskCreateDto
     public int CheckPoints { get; set; }
     public bool IsArchived { get; set; }
     public bool IsRepeat { get; set; }
-    public int CategoryId { get; set; }
-    public int ScheduleId { get; set; }
+    public string CategoryTitle { get; set; }
+    public DateTime? Date { get; set; }
 }
 
 public class TaskDto
@@ -37,10 +37,10 @@ public class TaskDto
     public int Reward { get; set; }
     public int CheckPoint { get; set; }
     public int CheckPoints { get; set; }
-    public bool IsDeleted { get; set; }
     public bool IsArchived { get; set; }
     public bool IsRepeat { get; set; }
-    public int CategoryId { get; set; }
+    public string CategoryTitle { get; set; }
+    public DateTime? Date { get; set; }
 }
 
 public class AchievementDto

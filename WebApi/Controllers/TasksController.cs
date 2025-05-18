@@ -9,15 +9,14 @@ namespace WebApi.Controllers;
 [ApiController]
 [Route("api/")]
 [Authorize]
-public class TasksController(IDayTaskService dayTaskService, ICurrentUserService currentUserService) : ControllerBase
+public class TasksController(IDayTaskService dayTaskService) : ControllerBase
 {
 
     [HttpDelete("task/{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeleteTask(int id)
     {
-        var user = await currentUserService.GetCurrentUserAsync();
-        await dayTaskService.DeleteByIdAsync(id, user.Id);
+        await dayTaskService.DeleteByIdAsync(id);
         return Ok();
     }
 
@@ -33,34 +32,35 @@ public class TasksController(IDayTaskService dayTaskService, ICurrentUserService
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateTask([FromBody] TaskCreateDto task)
     {
-        var user = await currentUserService.GetCurrentUserAsync();
-        await dayTaskService.CreateAsync(task, user.Id);
+        await dayTaskService.CreateAsync(task);
         return Created();
     }
 
 
-    [HttpGet("tasks/{user_id}")]
+    [HttpGet("tasks/")]
     [ProducesResponseType(typeof(List<TaskDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetTasks(int userId)
+    public async Task<IActionResult> GetTasks()
     {
-        var tasks = await dayTaskService.GetTasksForUserByDateAsync(userId, null);
+        var tasks = await dayTaskService.GetTasksForUserByDateAsync(null);
 
         return Ok(tasks);
     }
 
-    [HttpGet("tasks/{user_id}/{date}")]
+    [HttpGet("tasks/{date}")]
     [ProducesResponseType(typeof(List<TaskDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetTasksByDate(int userId, string date)
+    public async Task<IActionResult> GetTasksByDate(string date)
     {
 
         if (!DateTime.TryParseExact(date, "yyyy-MM-dd",
-                CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+             CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
         {
-            return BadRequest("Invalid date format. Please use YYYY-MM-DD format.");
+            return BadRequest("Invalid date format. Use YYYY-MM-DD.");
         }
 
-        var tasks = await dayTaskService.GetTasksForUserByDateAsync(userId, parsedDate);
-
+        // Приводим дату к UTC (без изменения времени)
+        var dateUtc = DateTime.SpecifyKind(parsedDate.Date, DateTimeKind.Utc);
+        
+        var tasks = await dayTaskService.GetTasksForUserByDateAsync(dateUtc);
         return Ok(tasks);
     }
 }

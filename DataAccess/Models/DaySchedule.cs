@@ -17,4 +17,14 @@ public class DaySchedule
     public User User { get; set; } = null!;
 
     public ICollection<DayTask> Tasks { get; set; } = new List<DayTask>();
+
+    public static DaySchedule CreateDefault(int userId, DateTime? date = null)
+    {
+        return new DaySchedule
+        {
+            UserId = userId,
+            Date = date?.Date,
+            Tasks = new List<DayTask>()
+        };
+    }
 }

@@ -30,4 +30,18 @@ public class Category
     public User User { get; set; } = null!;
 
     public ICollection<DayTask> Tasks { get; set; } = new List<DayTask>();
+
+    public static Category CreateDefault(int userId, string title)
+    {
+        return new Category
+        {
+            Title = title.Trim(),
+            Priority = 0,
+            UserId = userId,
+            CountSuccess = 0,
+            CountFailed = 0,
+            CountMiddle = 0,
+            Tasks = new List<DayTask>()
+        };
+    }
 }
