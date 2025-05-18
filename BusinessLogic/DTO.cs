@@ -3,8 +3,8 @@
 public class LevelDto
 {
     public int CurrentLvl { get; set; }
-    public float CurrentExp { get; set; }
-    public float UpperBoundExp { get; set; }
+    public int CurrentExp { get; set; }
+    public int UpperBoundExp { get; set; }
 }
 
 public class StatisticsDto

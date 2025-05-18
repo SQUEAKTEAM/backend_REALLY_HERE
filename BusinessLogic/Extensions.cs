@@ -12,6 +12,7 @@ public static class Extensions
         serviceCollection.AddScoped<IStatisticsService, StatisticsService>();
         serviceCollection.AddScoped<ICategoryService, CategoryService>();
         serviceCollection.AddScoped<IAchievementService, AchievementService>();
+        serviceCollection.AddScoped<ILvLService, LvLService>();
         serviceCollection.AddScoped<IUserService, UserService>();
         serviceCollection.AddScoped<IJwtService, JwtService>();
         serviceCollection.AddScoped<ICurrentUserService, CurrentUserService>();
