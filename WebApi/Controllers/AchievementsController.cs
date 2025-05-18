@@ -1,21 +1,21 @@
 ﻿using BusinessLogic;
+using BusinessLogic.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/")]
-public class AchievementsController : ControllerBase
+[Authorize]
+public class AchievementsController(IAchievementService achievementService) : ControllerBase
 {
-    /// <summary>
-    /// Get user achievements
-    /// </summary>
-    /// <param name="user_id">User ID</param>
-    [HttpGet("achievements/{user_id}")]
+
+    [HttpGet("achievements/")]
     [ProducesResponseType(typeof(List<AchievementDto>), StatusCodes.Status200OK)]
-    public IActionResult GetAchievements(int user_id)
+    public async Task<IActionResult> GetAchievements()
     {
-        // Implementation
-        return Ok();
+        var achievements = await achievementService.GetAchievementsAsync();
+        return Ok(achievements);
     }
 }
