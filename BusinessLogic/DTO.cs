@@ -16,6 +16,14 @@ public class StatisticsDto
     public string Title { get; set; }
 }
 
+public class DailyStatisticsDto
+{
+    public int CountSuccess { get; set; }
+    public int CountMiddle { get; set; }
+    public int CountFailure { get; set; }
+    public int Reward { get; set; }
+}
+
 public class TaskCreateDto
 {
     public string Title { get; set; } = null!;

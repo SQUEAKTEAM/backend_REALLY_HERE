@@ -1,6 +1,7 @@
 using DataAccess;
 using BusinessLogic;
 using Microsoft.OpenApi.Models;
+using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
@@ -40,4 +41,5 @@ app.UseAuthorization();
 app.MapControllers();
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseHangfireDashboard();
 app.Run();

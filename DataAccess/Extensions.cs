@@ -17,7 +17,8 @@ public static class Extensions
         serviceCollection.AddScoped<IDayScheduleRepository, DayScheduleRepository>();
         serviceCollection.AddScoped<ICategoryRepository, CategoryRepository>();
         serviceCollection.AddScoped<IDayTaskRepository, DayTaskRepository>();
-        
+        serviceCollection.AddScoped<IHostedRepository, HostedRepository>();
+
         serviceCollection.AddDbContext<AppContext>(x =>
         {
             x.UseNpgsql(connectionString ??
