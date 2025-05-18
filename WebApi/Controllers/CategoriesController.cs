@@ -1,20 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BusinessLogic.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/")]
-public class CategoriesController : ControllerBase
+[Authorize]
+public class CategoriesController(ICategoryService categoryService) : ControllerBase
 {
-    /// <summary>
-    /// Get user categories
-    /// </summary>
-    /// <param name="user_id">User ID</param>
-    [HttpGet("categories/{user_id}")]
+
+    [HttpGet("categories/")]
     [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
-    public IActionResult GetCategories(int user_id)
+    public async Task<IActionResult> GetCategories()
     {
-        // Implementation
-        return Ok();
+        var titles = await categoryService.GetCategoriesTitleAsync();
+        return Ok(titles);
     }
 }
