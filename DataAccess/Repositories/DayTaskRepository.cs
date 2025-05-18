@@ -32,12 +32,24 @@ internal class DayTaskRepository : GenericRepository<DayTask>, IDayTaskRepositor
     public async Task<IEnumerable<DayTask>> GetForUserByDateAsync(int userId, DateTime? date,
         CancellationToken cancellationToken = default)
     {
-        return await context.DayTasks
-            .Include(dt => dt.Schedule)
+        var baseQuery = context.DayTasks
+        .Include(dt => dt.Schedule)
+        .Where(dt => dt.Schedule != null 
+                    && dt.Schedule.UserId == userId 
+                    && !dt.IsDeleted);
+
+        if (!date.HasValue)
+        {
+            return await baseQuery
+                .Where(dt => !dt.Schedule.Date.HasValue)
+                .ToListAsync(cancellationToken);
+        }
+
+        var targetDate = date.Value.Date;
+        return await baseQuery
             .Where(dt =>
-                dt.Schedule != null &&
-                dt.Schedule.UserId == userId &&
-                (!date.HasValue || dt.Schedule.Date == date.Value.Date))
+                dt.Schedule.Date.HasValue &&
+                dt.Schedule.Date.Value.Date == targetDate)
             .ToListAsync(cancellationToken);
     }
     

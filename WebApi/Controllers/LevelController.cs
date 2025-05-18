@@ -1,37 +1,29 @@
 ﻿using BusinessLogic;
+using BusinessLogic.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/")]
-public class LevelController : ControllerBase
+[Authorize]
+public class LevelController(ILvLService lvLService) : ControllerBase
 {
-    /// <summary>
-    /// Get user level information
-    /// </summary>
-    /// <param name="user_id">User ID</param>
-    [HttpGet("lvl/{user_id}")]
+
+    [HttpGet("lvl/")]
     [ProducesResponseType(typeof(LevelDto), StatusCodes.Status200OK)]
-    public IActionResult GetLevel(int user_id)
+    public async Task<IActionResult> GetLevel()
     {
-        // Implementation
-        return Ok();
+        var lvl = await lvLService.GetLvLAsync();
+        return Ok(lvl);
     }
 
-    /// <summary>
-    /// Update user level
-    /// </summary>
-    /// <param name="id">Level ID</param>
-    /// <param name="lvl">Level data</param>
-    [HttpPut("lvl/{user_id}")]
+    [HttpPut("lvl/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult UpdateLevel(int id, [FromBody] LevelDto lvl)
+    public async Task<IActionResult> UpdateLevel([FromBody] LevelDto lvl)
     {
-        // 1. Найти пользователя по id
-        // 2. Обновить его данные из levelData
-        // 3. Сохранить изменения
-
+        await lvLService.UpdateLvLAsync(lvl);
         return Ok();
     }
 }

@@ -1,11 +1,19 @@
 ﻿using DataAccess.Interfaces;
 using DataAccess.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Repositories;
 
 internal class AchievementRepository : GenericRepository<Achievement>, IAchievementRepository
 {
     public AchievementRepository(AppContext context) : base(context) { }
+
+    public async Task<IEnumerable<Achievement>> GetByUserIdAsync(int userId, CancellationToken cancellationToken = default)
+    {
+        return await context.Achievements
+            .Where(c => c.UserId == userId)
+            .ToListAsync(cancellationToken);
+    }
 
     public async Task AddProgressAsync(int achievementId, int xpToAdd, CancellationToken cancellationToken = default)
     {
