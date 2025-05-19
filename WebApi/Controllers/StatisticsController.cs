@@ -17,4 +17,12 @@ public class StatisticsController(IStatisticsService statisticsService) : Contro
         var stats = await statisticsService.GetStatisticsAsync();
         return Ok(stats);
     }
+
+    [HttpGet("statistics/daily/")]
+    [ProducesResponseType(typeof(List<DailyStatisticsDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetDailyStatistics()
+    {
+        var stats = await statisticsService.GetDailyStatisticsAsync();
+        return Ok(stats);
+    }
 }
