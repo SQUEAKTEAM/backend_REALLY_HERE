@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(AppContext))]
-    [Migration("20250517140309_Init")]
+    [Migration("20250519165921_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -103,6 +103,9 @@ namespace DataAccess.Migrations
 
                     b.Property<DateTime?>("Date")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("DayOfWeek")
+                        .HasColumnType("integer");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");

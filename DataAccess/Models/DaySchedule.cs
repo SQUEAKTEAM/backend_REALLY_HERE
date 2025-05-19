@@ -17,6 +17,8 @@ public class DaySchedule
     public User User { get; set; } = null!;
 
     public ICollection<DayTask> Tasks { get; set; } = new List<DayTask>();
+    
+    public WeekDay? DayOfWeek { get; set; }
 
     public static DaySchedule CreateDefault(int userId, DateTime? date = null)
     {

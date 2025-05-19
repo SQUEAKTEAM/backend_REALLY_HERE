@@ -101,6 +101,9 @@ namespace DataAccess.Migrations
                     b.Property<DateTime?>("Date")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int?>("DayOfWeek")
+                        .HasColumnType("integer");
+
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
