@@ -18,15 +18,14 @@ internal class BackgroundJob
 
     public async Task UpdateStatisticsAndLvLAsync(CancellationToken cancellationToken = default)
     {
-        Console.WriteLine("cron work!!!");
         var users = await _userRepository.GetAllAsync(cancellationToken);
+
+        // Используем вчерашнюю дату для проверки выполнения задач
+        var dateToCheckUtc = DateTime.UtcNow.Date.AddDays(-1);
 
         foreach (var user in users)
         {
-            // Используем вчерашнюю дату для проверки выполнения задач
-            var dateToCheck = DateTime.UtcNow.Date.AddDays(-1);
-
-            var tasks = await _taskRepository.GetForUserByDateAsync(user.Id, dateToCheck, cancellationToken);
+            var tasks = await _taskRepository.GetForUserByDateAsync(user.Id, dateToCheckUtc, cancellationToken);
 
             await _repository.UpdateStatisticsAndLvLAsync(user.Id, tasks, cancellationToken);
         }
