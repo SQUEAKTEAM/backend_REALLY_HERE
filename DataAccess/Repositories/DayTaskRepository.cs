@@ -41,18 +41,31 @@ internal class DayTaskRepository : GenericRepository<DayTask>, IDayTaskRepositor
         if (!date.HasValue)
         {
             return await baseQuery
-                .Where(dt => !dt.Schedule.Date.HasValue)
+                .Where(dt => !dt.Schedule.Date.HasValue && !dt.Schedule.DayOfWeek.HasValue)
                 .ToListAsync(cancellationToken);
         }
 
         var targetDate = date.Value.Date;
+        var weekDay = (WeekDay)targetDate.DayOfWeek;
+
         return await baseQuery
             .Where(dt =>
-                dt.Schedule.Date.HasValue &&
-                dt.Schedule.Date.Value.Date == targetDate)
+                (dt.Schedule.Date.HasValue && dt.Schedule.Date.Value.Date == targetDate) || dt.Schedule.DayOfWeek == weekDay)
             .ToListAsync(cancellationToken);
     }
-    
+
+    public async Task<IEnumerable<DayTask>> GetForUserByDayOfWeekAsync(int userId, WeekDay dayOfWeek,
+        CancellationToken cancellationToken = default)
+    {
+        return await context.DayTasks
+            .Include(dt => dt.Schedule)
+            .Where(dt => dt.Schedule != null
+                    && dt.Schedule.UserId == userId
+                    && !dt.IsDeleted)
+            .Where(dt => dt.Schedule.DayOfWeek == dayOfWeek)
+                .ToListAsync(cancellationToken);
+    }
+
     public async Task<IEnumerable<DayTask>> GetByUserIdAsync(int userId, CancellationToken cancellationToken = default)
     {
         return await context.DayTasks

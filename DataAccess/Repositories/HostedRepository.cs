@@ -90,4 +90,15 @@ internal class HostedRepository : IHostedRepository
     {
         return level * 10;
     }
+
+    public async Task ResetProgressForRepeatedTasksAsync(int userId, IEnumerable<DayTask> tasks, CancellationToken cancellationToken = default)
+    {
+        foreach (var task in tasks)
+        {
+            task.CheckPoint = 0;
+            task.IsCompleted = false;
+
+            await context.SaveChangesAsync(cancellationToken);
+        }
+    }
 }

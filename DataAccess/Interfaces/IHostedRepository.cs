@@ -5,4 +5,5 @@ namespace DataAccess.Interfaces;
 public interface IHostedRepository
 {
     Task UpdateStatisticsAndLvLAsync(int userId, IEnumerable<DayTask> tasks, CancellationToken cancellationToken = default);
+    Task ResetProgressForRepeatedTasksAsync(int userId, IEnumerable<DayTask> tasks, CancellationToken cancellationToken = default);
 }

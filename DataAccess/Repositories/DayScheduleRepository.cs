@@ -64,4 +64,18 @@ internal class DayScheduleRepository : GenericRepository<DaySchedule>, IDaySched
             .Where(s => ids.Contains(s.Id))
             .ToListAsync(ct);
     }
+
+    public async Task<int> GetOrCreateScheduleIdByDayOfWeekAsync(int userId, WeekDay dayOfWeek, CancellationToken cancellationToken = default)
+    {
+        var existingId = await context.DaySchedules
+            .Where(s => s.UserId == userId && s.DayOfWeek == dayOfWeek)
+            .Select(s => s.Id)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (existingId > 0) return existingId;
+
+        var newSchedule = DaySchedule.CreateDefault(userId, null, dayOfWeek);
+        await CreateAsync(newSchedule, cancellationToken);
+        return newSchedule.Id;
+    }
 }
