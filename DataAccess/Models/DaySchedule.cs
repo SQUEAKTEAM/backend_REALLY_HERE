@@ -20,12 +20,13 @@ public class DaySchedule
     
     public WeekDay? DayOfWeek { get; set; }
 
-    public static DaySchedule CreateDefault(int userId, DateTime? date = null)
+    public static DaySchedule CreateDefault(int userId, DateTime? date = null, WeekDay? dayOfWeek = null)
     {
         return new DaySchedule
         {
             UserId = userId,
             Date = date?.Date,
+            DayOfWeek = dayOfWeek,
             Tasks = new List<DayTask>()
         };
     }

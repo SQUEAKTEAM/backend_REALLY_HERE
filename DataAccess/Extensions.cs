@@ -22,7 +22,7 @@ public static class Extensions
         serviceCollection.AddDbContext<AppContext>(x =>
         {
             x.UseNpgsql(connectionString ??
-                        "Host=localhost;Port=5432;Database=squake;Username=postgres;Password=postgres;");
+                        "Host=localhost;Port=5432;Database=squake;Username=postgres;Password=Wizard2310;");
         });
         
         return serviceCollection;

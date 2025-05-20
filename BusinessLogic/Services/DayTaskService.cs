@@ -27,7 +27,16 @@ internal class DayTaskService : IDayTaskService
     public async Task CreateAsync(TaskCreateDto taskDto, CancellationToken cancellationToken = default)
     {
         var user = await _currentUserService.GetCurrentUserAsync();
-        var scheduleId = await _scheduleRepository.GetOrCreateScheduleIdByDateAsync(user.Id, taskDto.Date, cancellationToken);
+        int scheduleId;
+        if (taskDto.IsRepeat && taskDto.Date.HasValue)
+        {
+            WeekDay dayOfWeek = (WeekDay)taskDto.Date.Value.Date.DayOfWeek;
+            scheduleId = await _scheduleRepository.GetOrCreateScheduleIdByDayOfWeekAsync(user.Id, dayOfWeek, cancellationToken);
+        }
+        else
+        {
+            scheduleId = await _scheduleRepository.GetOrCreateScheduleIdByDateAsync(user.Id, taskDto.Date, cancellationToken);
+        }
         var categoryId = await _categoryRepository.GetOrCreateCategoryIdByTitleAsync(user.Id, taskDto.CategoryTitle, cancellationToken);
 
         var dayTask = new DayTask

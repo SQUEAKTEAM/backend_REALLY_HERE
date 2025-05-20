@@ -9,4 +9,6 @@ public interface IDayTaskRepository : IGenericRepository<DayTask>
     Task<IEnumerable<DayTask>> GetCompletedTasksAsync(CancellationToken cancellationToken = default);
     Task<IEnumerable<DayTask>> GetForUserByDateAsync(int userId, DateTime? date, CancellationToken cancellationToken = default);
     Task<IEnumerable<DayTask>> GetByUserIdAsync(int userId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<DayTask>> GetForUserByDayOfWeekAsync(int userId, WeekDay dayOfWeek,
+        CancellationToken cancellationToken = default);
 }

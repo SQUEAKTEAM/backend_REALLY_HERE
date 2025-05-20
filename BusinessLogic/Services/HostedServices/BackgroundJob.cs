@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Interfaces;
 using DataAccess.Interfaces;
+using DataAccess.Models;
 
 namespace BusinessLogic.Services.HostedServices;
 
@@ -26,8 +27,12 @@ internal class BackgroundJob
         foreach (var user in users)
         {
             var tasks = await _taskRepository.GetForUserByDateAsync(user.Id, dateToCheckUtc, cancellationToken);
-
             await _repository.UpdateStatisticsAndLvLAsync(user.Id, tasks, cancellationToken);
+
+            var dateToResetRepeatedTasksUtc = DateTime.UtcNow.Date.AddDays(-2);
+            WeekDay dayOfWeek = (WeekDay)dateToResetRepeatedTasksUtc.DayOfWeek;
+            var repeatedTasks = await _taskRepository.GetForUserByDayOfWeekAsync(user.Id, dayOfWeek, cancellationToken);
+            await _repository.ResetProgressForRepeatedTasksAsync(user.Id, repeatedTasks, cancellationToken);
         }
     }
 }
