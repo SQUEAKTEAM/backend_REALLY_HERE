@@ -1,9 +1,11 @@
 using DataAccess;
 using BusinessLogic;
+using BusinessLogic.EmailSender;
 using Microsoft.OpenApi.Models;
 using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDataAccess();
 builder.Services.AddBusinessLogic();
