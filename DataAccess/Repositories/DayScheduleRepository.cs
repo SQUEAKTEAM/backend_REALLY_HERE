@@ -36,7 +36,7 @@ internal class DayScheduleRepository : GenericRepository<DaySchedule>, IDaySched
         if (!date.HasValue)
         {
             return await query
-                .Where(s => !s.Date.HasValue)
+                .Where(s => !s.Date.HasValue && !s.DayOfWeek.HasValue)
                 .Select(s => s.Id)
                 .FirstOrDefaultAsync(cancellationToken);
         }
