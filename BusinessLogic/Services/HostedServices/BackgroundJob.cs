@@ -33,6 +33,13 @@ internal class BackgroundJob
             WeekDay dayOfWeek = (WeekDay)dateToResetRepeatedTasksUtc.DayOfWeek;
             var repeatedTasks = await _taskRepository.GetForUserByDayOfWeekAsync(user.Id, dayOfWeek, cancellationToken);
             await _repository.ResetProgressForRepeatedTasksAsync(user.Id, repeatedTasks, cancellationToken);
+
+            var deleteTasks = await _taskRepository.GetForUserByDateAsync(user.Id, null, cancellationToken);
+            foreach(DayTask task in deleteTasks)
+            {
+                task.IsDeleted = true;
+                await _taskRepository.UpdateAsync(task, cancellationToken);
+            }
         }
     }
 }

@@ -30,17 +30,11 @@ internal class DayTaskService : IDayTaskService
         int scheduleId;
         if (taskDto.IsRepeat && taskDto.Date.HasValue)
         {
-            Console.WriteLine(taskDto.Date);
-            Console.WriteLine(taskDto.IsRepeat);
-            Console.WriteLine("--------------------------------");
             WeekDay dayOfWeek = (WeekDay)taskDto.Date.Value.Date.DayOfWeek;
             scheduleId = await _scheduleRepository.GetOrCreateScheduleIdByDayOfWeekAsync(user.Id, dayOfWeek, cancellationToken);
         }
         else
         {
-            Console.WriteLine(taskDto.Date);
-            Console.WriteLine(taskDto.IsRepeat);
-            Console.WriteLine("***************************************************");
             scheduleId = await _scheduleRepository.GetOrCreateScheduleIdByDateAsync(user.Id, taskDto.Date, cancellationToken);
         }
         var categoryId = await _categoryRepository.GetOrCreateCategoryIdByTitleAsync(user.Id, taskDto.CategoryTitle, cancellationToken);
