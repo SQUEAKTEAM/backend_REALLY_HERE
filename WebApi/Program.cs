@@ -15,7 +15,8 @@ builder.Services.AddCors(options => {
 });
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddDataAccess();
+var connectionString = builder.Configuration.GetConnectionString("PostgreSQL");
+builder.Services.AddDataAccess(connectionString);
 builder.Services.AddBusinessLogic();
 builder.Services.Configure<AuthSettings>(
     builder.Configuration.GetSection("AuthSettings"));
