@@ -1,13 +1,11 @@
 using DataAccess;
 using BusinessLogic;
+using BusinessLogic.EmailSender;
 using Microsoft.OpenApi.Models;
 using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.WebHost.ConfigureKestrel(serverOptions => {
-    serverOptions.ListenAnyIP(5000);
-});
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddCors(options => {
     options.AddPolicy("AllowAll", policy => {
         policy.AllowAnyOrigin()

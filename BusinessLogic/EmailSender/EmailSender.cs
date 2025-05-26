@@ -19,15 +19,15 @@ public class EmailSender : IEmailSender
     
     public Task SendEmailAsync(string email, string subject, string message)
     {
-        var mail = "squake_team@outlook.com";
-        var pw = "GrishaMishaDima";
+        var mail = "dgvfggreg@yandex.ru";
+        var pw = "tzxzrdzbxzbpyplr";
 
-        var client = new SmtpClient("smtp-mail.outlook.com", 587)
+        var client = new SmtpClient("smtp.yandex.ru", 587)
         {
             EnableSsl = true,
-            Credentials = new NetworkCredential(mail, pw)
+            Credentials = new NetworkCredential(mail, pw),
+            Timeout = 10000
         };
-
         return client.SendMailAsync(
             new MailMessage(from: mail, to: email, subject, message));
     }

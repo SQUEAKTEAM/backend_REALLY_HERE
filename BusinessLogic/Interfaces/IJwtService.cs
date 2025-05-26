@@ -1,8 +1,11 @@
-﻿using DataAccess.Models;
+﻿using System.Security.Claims;
+using DataAccess.Models;
 
 namespace BusinessLogic.Interfaces;
 
 public interface IJwtService
 {
-    string GenerateToken(User user, CancellationToken cancellationToken = default);
+    string GenerateAccessToken(User user);
+    string GenerateRefreshToken(User user);
+    ClaimsPrincipal? GetPrincipalFromExpiredToken(string token);
 }

@@ -1,20 +1,23 @@
-﻿using BusinessLogic.Interfaces;
+﻿using System.Security.Claims;
+using BusinessLogic.Interfaces;
 using DataAccess.Interfaces;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BusinessLogic.Services;
 
 internal class UserService : IUserService
 {
     private readonly IUserRepository repository;
-    private readonly IJwtService service;
+    private readonly IJwtService jwtService;
     
-    public UserService(IUserRepository repository, IJwtService service)
+    public UserService(IUserRepository repository, IJwtService jwtService)
     {
         this.repository = repository;
-        this.service = service;
+        this.jwtService = jwtService;
     }
+
 
     public async Task Register(AuthUserDto authDto, CancellationToken cancellationToken = default)
     {
@@ -30,7 +33,7 @@ internal class UserService : IUserService
         await repository.CreateAsync(user);
     }
     
-    public async Task<string> Login(AuthUserDto authDto, CancellationToken cancellationToken = default)
+    public async Task<TokenDto> Login(AuthUserDto authDto, CancellationToken cancellationToken = default)
     {
         var user = await repository.GetByEmailAsync(authDto.Email);
         
@@ -41,13 +44,48 @@ internal class UserService : IUserService
         
         var result = new PasswordHasher<User>()
             .VerifyHashedPassword(user, user.HashPass, authDto.Password);
-        if (result == PasswordVerificationResult.Success)
-        {
-            return service.GenerateToken(user);
-        }
-        else
+        
+        if (result != PasswordVerificationResult.Success)
         {
             throw new Exception("Unauthorized");
         }
+        
+        return new TokenDto
+        {
+            AccessToken = jwtService.GenerateAccessToken(user),
+            RefreshToken = jwtService.GenerateRefreshToken(user)
+        };
+    }
+
+    public async Task<TokenDto> RefreshTokens(string accessToken, string refreshToken)
+    {
+        var principal = jwtService.GetPrincipalFromExpiredToken(accessToken);
+        var userEmail = principal.FindFirstValue("Email");
+    
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            throw new SecurityTokenException("Invalid token - email not found");
+        }
+
+        var refreshPrincipal = jwtService.GetPrincipalFromExpiredToken(refreshToken);
+        var refreshUserEmail = refreshPrincipal.FindFirstValue("Email");
+        var isRefreshToken = refreshPrincipal.Claims.Any(c => c.Type == "RefreshToken" && c.Value == "true");
+    
+        if (string.IsNullOrEmpty(refreshUserEmail) || !isRefreshToken || userEmail != refreshUserEmail)
+        {
+            throw new SecurityTokenException("Invalid refresh token");
+        }
+
+        var user = await repository.GetByEmailAsync(userEmail);
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        return new TokenDto
+        {
+            AccessToken = jwtService.GenerateAccessToken(user),
+            RefreshToken = jwtService.GenerateRefreshToken(user)
+        };
     }
 }

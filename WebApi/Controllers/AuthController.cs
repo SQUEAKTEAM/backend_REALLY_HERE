@@ -5,21 +5,34 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApi.Controllers;
 
 [ApiController]
-[Route("api/")]
-public class AuthController(IUserService userService) : ControllerBase
+[Route("api/auth")]
+public class AuthController : ControllerBase
 {
-    [HttpPost("register")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> Register([FromBody] AuthUserDto authDto)
+    private readonly IUserService _userService;
+
+    public AuthController(IUserService userService)
     {
-        await userService.Register(authDto);
-        return Created();
+        _userService = userService;
     }
-    
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] AuthUserDto authDto)
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(AuthUserDto authDto)
     {
-        var token = await userService.Login(authDto);
-        return Ok(token);
+        await _userService.Register(authDto);
+        return Ok();
+    }
+
+    [HttpPost("login")]
+    public async Task<ActionResult<TokenDto>> Login(AuthUserDto authDto)
+    {
+        var tokens = await _userService.Login(authDto);
+        return Ok(tokens);
+    }
+
+    [HttpPost("refresh")]
+    public async Task<ActionResult<TokenDto>> Refresh(TokenDto tokenDto)
+    {
+        var tokens = await _userService.RefreshTokens(tokenDto.AccessToken, tokenDto.RefreshToken);
+        return Ok(tokens);
     }
 }

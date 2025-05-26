@@ -20,7 +20,7 @@ public static class Extensions
         serviceCollection.AddScoped<IJwtService, JwtService>();
         serviceCollection.AddScoped<ICurrentUserService, CurrentUserService>();
         serviceCollection.AddScoped<IHangfireHostedService, HangfireHostedService>();
-
+        
         serviceCollection.AddHostedService<HangfireHostedService>();
 
         serviceCollection.AddHangfire(configuration => configuration
