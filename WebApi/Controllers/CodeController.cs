@@ -6,11 +6,11 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/")]
-public class TestController : Controller
+public class CodeController : Controller
 {
     private readonly IEmailSender _emailSender;
 
-    public TestController(IEmailSender emailSender)
+    public CodeController(IEmailSender emailSender)
     {
         _emailSender = emailSender;
     }
