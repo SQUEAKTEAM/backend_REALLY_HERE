@@ -19,6 +19,8 @@ builder.Services.AddDataAccess();
 builder.Services.AddBusinessLogic();
 builder.Services.Configure<AuthSettings>(
     builder.Configuration.GetSection("AuthSettings"));
+builder.Services.Configure<EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddAuth(builder.Configuration);
 builder.Services.AddSwaggerGen(c =>
 {

@@ -1,10 +1,18 @@
 ﻿using System.Net;
 using System.Net.Mail;
+using Microsoft.Extensions.Options;
 
 namespace BusinessLogic.EmailSender;
 
 public class EmailSender : IEmailSender
 {
+    private readonly EmailSettings _emailSettings;
+
+    public EmailSender(IOptions<EmailSettings> emailSettings)
+    {
+        _emailSettings = emailSettings.Value;
+    }
+    
     public async Task<string> SendVerificationCodeAsync(string email)
     {
         var verificationCode = GenerateRandomCode();
@@ -19,17 +27,14 @@ public class EmailSender : IEmailSender
     
     public Task SendEmailAsync(string email, string subject, string message)
     {
-        var mail = "dgvfggreg@yandex.ru";
-        var pw = "tzxzrdzbxzbpyplr";
-
-        var client = new SmtpClient("smtp.yandex.ru", 587)
+        var client = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort)
         {
-            EnableSsl = true,
-            Credentials = new NetworkCredential(mail, pw),
-            Timeout = 10000
+            EnableSsl = _emailSettings.EnableSsl,
+            Credentials = new NetworkCredential(_emailSettings.Email, _emailSettings.Password),
+            Timeout = _emailSettings.Timeout
         };
         return client.SendMailAsync(
-            new MailMessage(from: mail, to: email, subject, message));
+            new MailMessage(from: _emailSettings.Email, to: email, subject, message));
     }
     
     private string GenerateRandomCode()
