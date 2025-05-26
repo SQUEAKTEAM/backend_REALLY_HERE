@@ -51,23 +51,23 @@ internal class JwtService(IOptions<AuthSettings> options) : IJwtService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
+    public ClaimsPrincipal? GetPrincipalFromToken(string token, bool validateLifetime = false)
     {
         var tokenValidationParameters = new TokenValidationParameters
         {
             ValidateAudience = false,
             ValidateIssuer = false,
+            ValidateLifetime = validateLifetime,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authSettings.SecretKey)),
-            ValidateLifetime = false
+            ClockSkew = TimeSpan.Zero
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
 
         if (securityToken is not JwtSecurityToken jwtSecurityToken ||
-            !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
-                StringComparison.InvariantCultureIgnoreCase))
+            !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
         {
             throw new SecurityTokenException("Invalid token");
         }

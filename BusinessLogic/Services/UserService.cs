@@ -59,28 +59,22 @@ internal class UserService : IUserService
 
     public async Task<TokenDto> RefreshTokens(string accessToken, string refreshToken)
     {
-        var principal = jwtService.GetPrincipalFromExpiredToken(accessToken);
+        var principal = jwtService.GetPrincipalFromToken(accessToken, validateLifetime: false);
         var userEmail = principal.FindFirstValue("Email");
     
         if (string.IsNullOrEmpty(userEmail))
-        {
             throw new SecurityTokenException("Invalid token - email not found");
-        }
 
-        var refreshPrincipal = jwtService.GetPrincipalFromExpiredToken(refreshToken);
+        var refreshPrincipal = jwtService.GetPrincipalFromToken(refreshToken, validateLifetime: true);
         var refreshUserEmail = refreshPrincipal.FindFirstValue("Email");
         var isRefreshToken = refreshPrincipal.Claims.Any(c => c.Type == "RefreshToken" && c.Value == "true");
     
         if (string.IsNullOrEmpty(refreshUserEmail) || !isRefreshToken || userEmail != refreshUserEmail)
-        {
             throw new SecurityTokenException("Invalid refresh token");
-        }
 
         var user = await repository.GetByEmailAsync(userEmail);
         if (user == null)
-        {
             throw new Exception("User not found");
-        }
 
         return new TokenDto
         {

@@ -7,5 +7,5 @@ public interface IJwtService
 {
     string GenerateAccessToken(User user);
     string GenerateRefreshToken(User user);
-    ClaimsPrincipal? GetPrincipalFromExpiredToken(string token);
+    public ClaimsPrincipal? GetPrincipalFromToken(string token, bool validateLifetime = false);
 }
