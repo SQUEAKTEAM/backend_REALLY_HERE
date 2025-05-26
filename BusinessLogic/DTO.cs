@@ -3,8 +3,8 @@
 public class LevelDto
 {
     public int CurrentLvl { get; set; }
-    public int CurrentExp { get; set; }
-    public int UpperBoundExp { get; set; }
+    public float CurrentExp { get; set; }
+    public float UpperBoundExp { get; set; }
 }
 
 public class StatisticsDto
@@ -21,7 +21,7 @@ public class DailyStatisticsDto
     public int CountSuccess { get; set; }
     public int CountMiddle { get; set; }
     public int CountFailure { get; set; }
-    public int Reward { get; set; }
+    public float Reward { get; set; }
 }
 
 public class TaskCreateDto

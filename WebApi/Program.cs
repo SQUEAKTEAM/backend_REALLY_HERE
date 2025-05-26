@@ -1,11 +1,21 @@
 using DataAccess;
 using BusinessLogic;
-using BusinessLogic.EmailSender;
 using Microsoft.OpenApi.Models;
 using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+builder.WebHost.ConfigureKestrel(serverOptions => {
+    serverOptions.ListenAnyIP(5000);
+});
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowAll", policy => {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDataAccess();
 builder.Services.AddBusinessLogic();
@@ -38,6 +48,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services.AddControllers();
 var app = builder.Build();
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

@@ -17,10 +17,10 @@ public class User
     public int CurrentLvl { get; set; }
 
     [Required]
-    public int CurrentXp { get; set; }
+    public float CurrentXp { get; set; }
 
     [Required]
-    public int UpperBounds { get; set; }
+    public float UpperBounds { get; set; }
     
     public ICollection<Category> Categories { get; set; } = new List<Category>();
 

@@ -1,4 +1,6 @@
 ﻿using System.Globalization;
+using System.Text.Json;
+using System.Threading.Tasks;
 using BusinessLogic;
 using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -28,7 +30,7 @@ public class TasksController(IDayTaskService dayTaskService) : ControllerBase
         return Ok();
     }
 
-    [HttpPost("task")]
+    [HttpPost("task/")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateTask([FromBody] TaskCreateDto task)
     {
@@ -50,7 +52,6 @@ public class TasksController(IDayTaskService dayTaskService) : ControllerBase
     [ProducesResponseType(typeof(List<TaskDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTasksByDate(string date)
     {
-
         if (!DateTime.TryParseExact(date, "yyyy-MM-dd",
              CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
         {
