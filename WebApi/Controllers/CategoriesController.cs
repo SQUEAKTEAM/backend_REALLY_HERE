@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Interfaces;
+﻿using BusinessLogic;
+using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +12,18 @@ public class CategoriesController(ICategoryService categoryService) : Controller
 {
 
     [HttpGet("categories/")]
-    [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<CategoryDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetCategories()
     {
-        var titles = await categoryService.GetCategoriesTitleAsync();
-        return Ok(titles);
+        var categories = await categoryService.GetCategoriesAsync();
+        return Ok(categories);
+    }
+
+    [HttpPost("category/")]
+    [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> CreateCategory([FromBody] CategoryCreateDto category)
+    {
+        await categoryService.CreateCategoryAsync(category.Title);
+        return Ok();
     }
 }

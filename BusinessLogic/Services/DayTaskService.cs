@@ -37,7 +37,6 @@ internal class DayTaskService : IDayTaskService
         {
             scheduleId = await _scheduleRepository.GetOrCreateScheduleIdByDateAsync(user.Id, taskDto.Date, cancellationToken);
         }
-        var categoryId = await _categoryRepository.GetOrCreateCategoryIdByTitleAsync(user.Id, taskDto.CategoryTitle, cancellationToken);
 
         var dayTask = new DayTask
         {
@@ -50,7 +49,7 @@ internal class DayTaskService : IDayTaskService
             IsDeleted = false,
             IsArchived = taskDto.IsArchived,
             IsRepeat = taskDto.IsRepeat,
-            CategoryId = categoryId,
+            CategoryId = taskDto.CategoryId,
             ScheduleId = scheduleId,
             UserId = user.Id
         };
@@ -64,18 +63,12 @@ internal class DayTaskService : IDayTaskService
         var tasks = await _taskRepository.GetForUserByDateAsync(user.Id, date, cancellationToken);
 
         var scheduleIds = tasks.Select(t => t.ScheduleId).Distinct().ToList();
-        var categoryIds = tasks.Select(t => t.CategoryId).Distinct().ToList();
-
         var schedules = await _scheduleRepository.GetByIdsAsync(scheduleIds, cancellationToken);
-        var categories = await _categoryRepository.GetByIdsAsync(categoryIds, cancellationToken);
-
         var scheduleDict = schedules.ToDictionary(s => s.Id);
-        var categoryDict = categories.ToDictionary(c => c.Id);
 
         return tasks.Select(task => {
 
             var schedule = scheduleDict.GetValueOrDefault(task.ScheduleId);
-            var category = categoryDict.GetValueOrDefault(task.CategoryId);
 
             return new TaskDto
             {
@@ -88,7 +81,7 @@ internal class DayTaskService : IDayTaskService
                 CheckPoints = task.CheckPoints,
                 IsArchived = task.IsArchived,
                 IsRepeat = task.IsRepeat,
-                CategoryTitle = category.Title,
+                CategoryId = task.CategoryId,
                 Date = schedule.Date
             };
         });
@@ -98,7 +91,6 @@ internal class DayTaskService : IDayTaskService
     {
         var user = await _currentUserService.GetCurrentUserAsync();
         var scheduleId = await _scheduleRepository.GetOrCreateScheduleIdByDateAsync(user.Id, taskDto.Date, cancellationToken);
-        var categoryId = await _categoryRepository.GetOrCreateCategoryIdByTitleAsync(user.Id, taskDto.CategoryTitle, cancellationToken);
 
         var dayTask = new DayTask
         {
@@ -111,7 +103,7 @@ internal class DayTaskService : IDayTaskService
             CheckPoints = taskDto.CheckPoints,
             IsArchived = taskDto.IsArchived,
             IsRepeat = taskDto.IsRepeat,
-            CategoryId = categoryId,
+            CategoryId = taskDto.CategoryId,
             ScheduleId = scheduleId,
             UserId = user.Id
         };
@@ -124,7 +116,6 @@ internal class DayTaskService : IDayTaskService
         var dayTask = await _taskRepository.GetByIdAsync(id, cancellationToken);
         var user = await _currentUserService.GetCurrentUserAsync();
         var date = await _scheduleRepository.GetDateAsync(user.Id, dayTask.ScheduleId, cancellationToken);
-        var categoryTitle = await _categoryRepository.GetTitleAsync(user.Id, dayTask.CategoryId, cancellationToken);
 
         if (dayTask == null)
             return null;
@@ -140,7 +131,7 @@ internal class DayTaskService : IDayTaskService
             CheckPoints = dayTask.CheckPoints,
             IsArchived = dayTask.IsArchived,
             IsRepeat = dayTask.IsRepeat,
-            CategoryTitle = categoryTitle,
+            CategoryId = dayTask.CategoryId,
             Date = date
         };
     }

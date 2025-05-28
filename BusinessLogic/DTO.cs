@@ -32,7 +32,7 @@ public class TaskCreateDto
     public int CheckPoints { get; set; }
     public bool IsArchived { get; set; }
     public bool IsRepeat { get; set; }
-    public string CategoryTitle { get; set; }
+    public int CategoryId { get; set; }
     public DateTime? Date { get; set; }
 }
 
@@ -47,7 +47,7 @@ public class TaskDto
     public int CheckPoints { get; set; }
     public bool IsArchived { get; set; }
     public bool IsRepeat { get; set; }
-    public string CategoryTitle { get; set; }
+    public int CategoryId { get; set; }
     public DateTime? Date { get; set; }
 }
 
@@ -76,4 +76,15 @@ public class ResetPasswordDto
 {
     public string Email { get; set; }
     public string NewPassword { get; set; }
+}
+
+public class CategoryCreateDto
+{
+    public string Title { get; set; }
+}
+
+public class CategoryDto
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
 }
