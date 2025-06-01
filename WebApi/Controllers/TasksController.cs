@@ -40,7 +40,7 @@ public class TasksController(IDayTaskService dayTaskService) : ControllerBase
 
 
     [HttpGet("tasks/")]
-    [ProducesResponseType(typeof(List<TaskDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<TaskGetDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTasks()
     {
         var tasks = await dayTaskService.GetTasksForUserByDateAsync(null);
@@ -49,7 +49,7 @@ public class TasksController(IDayTaskService dayTaskService) : ControllerBase
     }
 
     [HttpGet("tasks/{date}")]
-    [ProducesResponseType(typeof(List<TaskDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<TaskGetDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTasksByDate(string date)
     {
         if (!DateTime.TryParseExact(date, "yyyy-MM-dd",

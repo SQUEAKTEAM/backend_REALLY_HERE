@@ -32,7 +32,7 @@ public class TaskCreateDto
     public int CheckPoints { get; set; }
     public bool IsArchived { get; set; }
     public bool IsRepeat { get; set; }
-    public int CategoryId { get; set; }
+    public CategoryDto Category { get; set; }
     public DateTime? Date { get; set; }
 }
 
@@ -47,7 +47,22 @@ public class TaskDto
     public int CheckPoints { get; set; }
     public bool IsArchived { get; set; }
     public bool IsRepeat { get; set; }
-    public int CategoryId { get; set; }
+    public CategoryDto Category { get; set; }
+    public DateTime? Date { get; set; }
+}
+
+public class TaskGetDto
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = null!;
+    public string Img { get; set; } = null!;
+    public bool IsCompleted { get; set; }
+    public int Reward { get; set; }
+    public int CheckPoint { get; set; }
+    public int CheckPoints { get; set; }
+    public bool IsArchived { get; set; }
+    public bool IsRepeat { get; set; }
+    public CategoryDto Category { get; set; }
     public DateTime? Date { get; set; }
 }
 
