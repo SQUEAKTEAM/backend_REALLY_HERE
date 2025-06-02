@@ -18,8 +18,20 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register(AuthUserDto authDto)
     {
-        await _userService.Register(authDto);
-        return Ok();
+        try
+        {
+            await _userService.Register(authDto);
+            return Ok();
+        }
+        catch (ArgumentException ex)
+        {
+            return Conflict(new ProblemDetails
+            {
+                Title = "Ошибка регистрации",
+                Detail = ex.Message,
+                Status = StatusCodes.Status409Conflict
+            });
+        }
     }
 
     [HttpPost("login")]
