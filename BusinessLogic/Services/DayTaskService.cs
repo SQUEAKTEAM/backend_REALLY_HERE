@@ -9,18 +9,24 @@ internal class DayTaskService : IDayTaskService
 {
     private readonly IDayTaskRepository _taskRepository;
     private readonly ICurrentUserService _currentUserService;
+    private readonly ILvLService _lvlService;
     private readonly ICategoryRepository _categoryRepository;
+    private readonly IAchievementRepository _achievementRepository;
     private readonly IDayScheduleRepository _scheduleRepository;
 
     public DayTaskService(
         IDayTaskRepository taskRepository,
         ICurrentUserService currentUserService,
+        ILvLService lvlService,
         ICategoryRepository categoryRepository,
+        IAchievementRepository athievementRepository,
         IDayScheduleRepository scheduleRepository)
     {
         _taskRepository = taskRepository;
         _currentUserService = currentUserService;
+        _lvlService = lvlService;
         _categoryRepository = categoryRepository;
+        _achievementRepository = athievementRepository;
         _scheduleRepository = scheduleRepository;
     }
 
@@ -55,6 +61,18 @@ internal class DayTaskService : IDayTaskService
         };
 
         await _taskRepository.CreateAsync(dayTask, cancellationToken);
+
+        var reward = await _achievementRepository.UpdateProgressAndReturnRewardAsync
+        (
+            user.Id,
+            new[] { "Создать 3 задачи", "Создать 9 задач", "Создать 12 задач" },
+            cancellationToken
+        );
+
+        if (reward > 0)
+        {
+            await _lvlService.AddRewardToLvLAsync(reward, cancellationToken);
+        }
     }
 
     public async Task<IEnumerable<TaskGetDto>> GetTasksForUserByDateAsync(DateTime? date, CancellationToken cancellationToken)
@@ -167,5 +185,17 @@ internal class DayTaskService : IDayTaskService
         taskToDelete.IsDeleted = true;
 
         await _taskRepository.UpdateAsync(taskToDelete, cancellationToken);
+
+        var reward = await _achievementRepository.UpdateProgressAndReturnRewardAsync
+        (
+            user.Id,
+            new[] { "Удалить 1 задачу", "Удалить 3 задачи", "Удалить 6 задач" },
+            cancellationToken
+        );
+
+        if (reward > 0)
+        {
+            await _lvlService.AddRewardToLvLAsync(reward, cancellationToken);
+        }
     }
 }

@@ -8,11 +8,13 @@ internal class LvLService: ILvLService
 {
     private readonly IUserRepository _repository;
     private readonly ICurrentUserService _currentUserService;
+    private readonly IAchievementRepository _achievementRepository;
 
-    public LvLService(IUserRepository repository, ICurrentUserService currentUserService)
+    public LvLService(IUserRepository repository, ICurrentUserService currentUserService, IAchievementRepository achievementRepository)
     {
         _repository = repository;
         _currentUserService = currentUserService;
+        _achievementRepository = achievementRepository;
     }
     public async Task<LevelDto> GetLvLAsync(CancellationToken cancellationToken = default)
     {
@@ -32,6 +34,33 @@ internal class LvLService: ILvLService
         user.CurrentXp = lvl.CurrentExp;
         user.UpperBounds = lvl.UpperBoundExp;
 
-        await _repository.UpdateAsync(user);
+        await _repository.UpdateAsync(user, cancellationToken);
+
+        var reward = await _achievementRepository.UpdateProgressAndReturnRewardAsync
+        (
+            user.Id,
+            new[] { "Получить 5 лвл", "Получить 20 лвл", "Получить 50 лвл" },
+            cancellationToken,
+            user.CurrentLvl
+        );
+
+        if (reward > 0)
+        {
+            await AddRewardToLvLAsync(reward, cancellationToken);
+        }
+    }
+    public async Task AddRewardToLvLAsync(int reward, CancellationToken cancellationToken = default)
+    {
+        var user = await _currentUserService.GetCurrentUserAsync();
+
+        user.CurrentXp += reward;
+        while (user.CurrentXp >= user.UpperBounds)
+        {
+            user.CurrentLvl += 1;
+            user.CurrentXp -= user.UpperBounds;
+            user.UpperBounds = user.CurrentLvl * 10;
+        }
+
+        await _repository.UpdateAsync(user, cancellationToken);
     }
 }

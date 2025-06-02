@@ -28,4 +28,17 @@ public class Achievement
 
     [ForeignKey("UserId")]
     public User User { get; set; } = null!;
+
+    public static Achievement CreateDefault(int userId, string title, int upperBounds, int reward)
+    {
+        return new Achievement
+        {
+            Title = title.Trim(),
+            CurrentXp = 0,
+            UpperBounds = upperBounds,
+            Reward = reward,
+            IsCompleted = false,
+            UserId = userId
+        };
+    }
 }

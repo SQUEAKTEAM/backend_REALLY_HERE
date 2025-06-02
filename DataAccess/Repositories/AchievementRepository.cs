@@ -39,4 +39,33 @@ internal class AchievementRepository : GenericRepository<Achievement>, IAchievem
             await context.SaveChangesAsync(cancellationToken);
         }
     }
+    public async Task<int> UpdateProgressAndReturnRewardAsync(int userId, string[] titles, CancellationToken cancellationToken, int currentProgress = -1)
+    {
+        var taskCreationAchievements = await context.Achievements
+            .Where(a => a.UserId == userId && titles.Contains(a.Title))
+            .ToListAsync(cancellationToken);
+
+        int reward = 0;
+        foreach (var achievement in taskCreationAchievements)
+        {
+            if (!achievement.IsCompleted)
+            {
+                if (currentProgress != -1)
+                {
+                    await AddProgressAsync(achievement.Id, currentProgress - achievement.CurrentXp, cancellationToken);
+                }
+                else
+                {
+                    await AddProgressAsync(achievement.Id, 1, cancellationToken);
+                }
+
+                if (achievement.CurrentXp >= achievement.UpperBounds)
+                {
+                    await CompleteAchievementAsync(achievement.Id, cancellationToken);
+                    reward += achievement.Reward;
+                }
+            }
+        }
+        return reward;
+    }
 }
