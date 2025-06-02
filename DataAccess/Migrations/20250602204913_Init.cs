@@ -21,8 +21,8 @@ namespace DataAccess.Migrations
                     Email = table.Column<string>(type: "text", nullable: false),
                     HashPass = table.Column<string>(type: "text", nullable: false),
                     CurrentLvl = table.Column<int>(type: "integer", nullable: false),
-                    CurrentXp = table.Column<int>(type: "integer", nullable: false),
-                    UpperBounds = table.Column<int>(type: "integer", nullable: false)
+                    CurrentXp = table.Column<float>(type: "real", nullable: false),
+                    UpperBounds = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {

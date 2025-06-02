@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(AppContext))]
-    [Migration("20250519165921_Init")]
+    [Migration("20250602204913_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -185,8 +185,8 @@ namespace DataAccess.Migrations
                     b.Property<int>("CurrentLvl")
                         .HasColumnType("integer");
 
-                    b.Property<int>("CurrentXp")
-                        .HasColumnType("integer");
+                    b.Property<float>("CurrentXp")
+                        .HasColumnType("real");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -196,8 +196,8 @@ namespace DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("UpperBounds")
-                        .HasColumnType("integer");
+                    b.Property<float>("UpperBounds")
+                        .HasColumnType("real");
 
                     b.HasKey("Id");
 

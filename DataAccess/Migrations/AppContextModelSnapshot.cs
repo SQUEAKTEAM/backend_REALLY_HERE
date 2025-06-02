@@ -182,8 +182,8 @@ namespace DataAccess.Migrations
                     b.Property<int>("CurrentLvl")
                         .HasColumnType("integer");
 
-                    b.Property<int>("CurrentXp")
-                        .HasColumnType("integer");
+                    b.Property<float>("CurrentXp")
+                        .HasColumnType("real");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -193,8 +193,8 @@ namespace DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("UpperBounds")
-                        .HasColumnType("integer");
+                    b.Property<float>("UpperBounds")
+                        .HasColumnType("real");
 
                     b.HasKey("Id");
 

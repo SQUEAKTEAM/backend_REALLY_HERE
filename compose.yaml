@@ -1,0 +1,27 @@
+﻿
+services:
+  crud_webapi:
+    build:
+      context: .
+      dockerfile: WebApi/Dockerfile
+    ports:
+      - "8080:8080"
+    container_name: todo_list
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+  db:
+    image: postgres:17-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=squake
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    container_name: db_postgres
+
+volumes:
+  db_data:

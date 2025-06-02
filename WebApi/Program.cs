@@ -3,6 +3,8 @@ using BusinessLogic;
 using BusinessLogic.EmailSender;
 using Microsoft.OpenApi.Models;
 using Hangfire;
+using Microsoft.EntityFrameworkCore;
+using AppContext = DataAccess.AppContext;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddTransient<IEmailSender, EmailSender>();
@@ -49,6 +51,11 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services.AddControllers();
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppContext>();
+    dbContext.Database.Migrate();
+}
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
