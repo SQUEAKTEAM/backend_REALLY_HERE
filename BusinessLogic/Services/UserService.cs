@@ -22,9 +22,18 @@ internal class UserService : IUserService
         this.jwtService = jwtService;
     }
 
-
+    public async Task<bool> IsEmailRegisteredAsync(string email, CancellationToken cancellationToken = default)
+    {
+        return await repository.GetByEmailAsync(email, cancellationToken) != null;
+    }
+    
     public async Task Register(AuthUserDto authDto, CancellationToken cancellationToken = default)
     {
+        if (await IsEmailRegisteredAsync(authDto.Email, cancellationToken))
+        {
+            throw new ArgumentException("Email уже занят");
+        }
+        
         var user = new User
         {
             Email = authDto.Email,
@@ -32,6 +41,7 @@ internal class UserService : IUserService
             CurrentXp = 0,
             UpperBounds = 0,
         };
+        
         var passHash = new PasswordHasher<User>().HashPassword(user, authDto.Password);
         user.HashPass = passHash;
         await repository.CreateAsync(user);
