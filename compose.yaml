@@ -12,6 +12,7 @@ services:
       - pgadmin4
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+    restart: always
     networks:
       - squake_network
 
