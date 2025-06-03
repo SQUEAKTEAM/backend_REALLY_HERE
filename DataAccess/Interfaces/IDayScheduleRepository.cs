@@ -10,4 +10,5 @@ public interface IDayScheduleRepository : IGenericRepository<DaySchedule>
     Task<DateTime?> GetDateAsync(int userId, int scheduleId, CancellationToken cancellationToken = default);
     Task<IEnumerable<DaySchedule>> GetByIdsAsync(IEnumerable<int> ids, CancellationToken ct);
     Task<int> GetOrCreateScheduleIdByDayOfWeekAsync(int userId, WeekDay dayOfWeek, CancellationToken cancellationToken = default);
+    Task<DaySchedule?> GetByTaskIdAsync(int taskId, CancellationToken cancellationToken = default);
 }

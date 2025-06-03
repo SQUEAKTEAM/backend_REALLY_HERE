@@ -93,7 +93,6 @@ internal class DayTaskService : IDayTaskService
             var schedule = scheduleDict.GetValueOrDefault(task.ScheduleId);
             var category = categories.FirstOrDefault(c => c.Id == task.CategoryId);
             
-            //await _categoryRepository.GetByIdAsync(task.CategoryId, cancellationToken);
 
             CategoryDto categoryDto = new CategoryDto {
                 Id = task.CategoryId,
@@ -120,25 +119,42 @@ internal class DayTaskService : IDayTaskService
     public async Task UpdateAsync(TaskDto taskDto, CancellationToken cancellationToken = default)
     {
         var user = await _currentUserService.GetCurrentUserAsync();
-        var scheduleId = await _scheduleRepository.GetOrCreateScheduleIdByDateAsync(user.Id, taskDto.Date, cancellationToken);
-
-        var dayTask = new DayTask
+    
+        var existingTask = await _taskRepository.GetByIdAsync(taskDto.Id, cancellationToken);
+        if (existingTask == null)
         {
-            Id = taskDto.Id,
-            Title = taskDto.Title,
-            Img = taskDto.Img,
-            IsCompleted = taskDto.IsCompleted,
-            Reward = taskDto.Reward,
-            CheckPoint = taskDto.CheckPoint,
-            CheckPoints = taskDto.CheckPoints,
-            IsArchived = taskDto.IsArchived,
-            IsRepeat = taskDto.IsRepeat,
-            CategoryId = taskDto.Category.Id,
-            ScheduleId = scheduleId,
-            UserId = user.Id
-        };
+            throw new Exception($"Task with id {taskDto.Id} not found");
+        }
 
-        await _taskRepository.UpdateAsync(dayTask, cancellationToken);
+        int scheduleId;
+        if (taskDto.IsRepeat && taskDto.Date.HasValue)
+        {
+            WeekDay dayOfWeek = (WeekDay)taskDto.Date.Value.Date.DayOfWeek;
+            scheduleId = await _scheduleRepository.GetOrCreateScheduleIdByDayOfWeekAsync(user.Id, dayOfWeek, cancellationToken);
+        } 
+        else if (taskDto.IsRepeat && !taskDto.Date.HasValue) 
+        {
+            var schedule = await _scheduleRepository.GetByTaskIdAsync(taskDto.Id, cancellationToken);
+            scheduleId = schedule.Id;
+        }
+        else
+        {
+            scheduleId = await _scheduleRepository.GetOrCreateScheduleIdByDateAsync(user.Id, taskDto.Date, cancellationToken);
+        }
+    
+        existingTask.Title = taskDto.Title;
+        existingTask.Img = taskDto.Img;
+        existingTask.IsCompleted = taskDto.IsCompleted;
+        existingTask.Reward = taskDto.Reward;
+        existingTask.CheckPoint = taskDto.CheckPoint;
+        existingTask.CheckPoints = taskDto.CheckPoints;
+        existingTask.IsArchived = taskDto.IsArchived;
+        existingTask.IsRepeat = taskDto.IsRepeat;
+        existingTask.CategoryId = taskDto.Category.Id;
+        existingTask.ScheduleId = scheduleId;
+        existingTask.UserId = user.Id;
+
+        await _taskRepository.UpdateAsync(existingTask, cancellationToken);
     }
 
     public async Task<TaskDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)

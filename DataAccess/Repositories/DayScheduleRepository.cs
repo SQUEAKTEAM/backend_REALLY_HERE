@@ -78,4 +78,11 @@ internal class DayScheduleRepository : GenericRepository<DaySchedule>, IDaySched
         await CreateAsync(newSchedule, cancellationToken);
         return newSchedule.Id;
     }
+    public async Task<DaySchedule?> GetByTaskIdAsync(int taskId, CancellationToken cancellationToken = default)
+    {
+        return await context.DaySchedules
+            .Include(ds => ds.Tasks)
+            .Where(ds => ds.Tasks.Any(t => t.Id == taskId))
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 }
