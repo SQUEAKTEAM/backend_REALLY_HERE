@@ -27,6 +27,7 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     container_name: db_postgres
+    restart: always
     networks:
       - squake_network
 
